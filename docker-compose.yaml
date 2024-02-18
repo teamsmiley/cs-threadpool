@@ -1,6 +1,7 @@
 version: '3'
 services:
   web:
+    # network_mode: "host"      
     build:
       context: .
     ports:

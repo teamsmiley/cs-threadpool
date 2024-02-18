@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using MySqlConnector;
 
 namespace ThreadTest.Controllers;
 
@@ -7,7 +8,6 @@ namespace ThreadTest.Controllers;
 [Route("values")]
 public class ValuesController : ControllerBase
 {
-
     private readonly ILogger<ValuesController> _logger;
 
     public ValuesController(ILogger<ValuesController> logger)
@@ -40,9 +40,21 @@ public class ValuesController : ControllerBase
         ThreadPool.GetMinThreads(out minWorker, out minIOC);
         Console.WriteLine("Minimum worker threads: {0}", minWorker);
 
+        using var connection = new MySqlConnection("server=192.168.1.21;User ID=root;Password=root;database=test; ");
+        connection.Open();
 
+        using var command = connection.CreateCommand();
+        // command.CommandText = "DO SLEEP(1000);SELECT Url FROM Blogs;";
+        command.CommandText = "SELECT Url FROM Blogs;";
 
-        Thread.Sleep(1000000); // Sleep for 10 seconds
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            var url = reader.GetString(0);
+            System.Console.WriteLine($"blog url {url}");
+        }
+
+        // Thread.Sleep(1000000); // Sleep for 10 seconds
         Console.WriteLine("Thread completed. go back to the pool.");
         return usedWorkerThread;
     }
