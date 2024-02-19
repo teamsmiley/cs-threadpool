@@ -1,2 +1,4 @@
 **/bin
-ThreadTest/locust/__pycache__/locust.cpython-311.pyc
+**/__pycache__
+**/obj
+**/.DS_Store
