@@ -1,9 +1,8 @@
 version: '3'
 services:
-  redis-master:
+  redis-main:
     image: 'bitnami/redis:7.2'
-    container_name: redis-master
-    hostname: redis-master
+    container_name: redis-main
     ports:
       - 6379:6379
     environment:
@@ -15,9 +14,10 @@ services:
     deploy:
       replicas: 2
     depends_on:
-      - redis-master
+      - redis-main
     environment:
       - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-main
       - ALLOW_EMPTY_PASSWORD=yes
   
   
