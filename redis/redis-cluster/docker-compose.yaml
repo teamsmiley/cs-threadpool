@@ -1,0 +1,65 @@
+version: '3'
+services:
+  redis-node-0:
+    image: 'bitnami/redis-cluster:7.2'
+    container_name: redis-node-0
+    ports:
+      - 6371:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-node-1:
+    image: 'bitnami/redis-cluster:7.2'
+    container_name: redis-node-1
+    ports:
+      - 6372:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-node-2:
+    image: 'bitnami/redis-cluster:7.2'
+    container_name: redis-node-2
+    ports:
+      - 6373:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-node-3:
+    image: 'bitnami/redis-cluster:7.2'
+    container_name: redis-node-3
+    ports:
+      - 6374:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-node-4:
+    image: 'bitnami/redis-cluster:7.2'
+    container_name: redis-node-4
+    ports:
+      - 6375:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-node-5:
+    image: 'bitnami/redis-cluster:7.2'
+    container_name: redis-node-5
+    ports:
+      - 6379:6379
+    depends_on:
+      - redis-node-0
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_CLUSTER_REPLICAS=1
+      - REDIS_CLUSTER_CREATOR=yes
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+

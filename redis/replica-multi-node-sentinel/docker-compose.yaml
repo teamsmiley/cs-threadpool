@@ -18,6 +18,7 @@ services:
       - redis-master
     environment:
       - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-master
       - ALLOW_EMPTY_PASSWORD=yes
 
   redis-sentinel:
