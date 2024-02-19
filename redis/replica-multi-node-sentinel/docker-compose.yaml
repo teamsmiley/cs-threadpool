@@ -19,5 +19,19 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=slave
       - ALLOW_EMPTY_PASSWORD=yes
-  
+
+  redis-sentinel:
+    image: 'bitnami/redis-sentinel:7.2'
+    deploy:
+      replicas: 3
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_MASTER_HOST=redis-master
+    depends_on:
+      - redis-master
+      - redis-replica
+    ports:
+      - '26379-26381'
+
+
   
