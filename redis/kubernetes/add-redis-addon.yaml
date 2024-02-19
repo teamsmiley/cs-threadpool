@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis-addon
+  namespace: argocd
+spec:
+  destination:
+    name: ''
+    namespace: web
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: apps/redis-addon
+    repoURL: 'https://github.com/bbbb/ccc.git'
+    targetRevision: HEAD
+  project: default
