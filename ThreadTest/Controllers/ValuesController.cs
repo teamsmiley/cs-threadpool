@@ -106,28 +106,16 @@ public class ValuesController : ControllerBase
         // redis.Close();
 
         // cluster
+        string connectString = "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6379";
+        var options = ConfigurationOptions.Parse(connectString);
+        var redisCluster = ConnectionMultiplexer.Connect(options);
 
-        ConnectionMultiplexer redisCluster = null;
-        try
-        {
-            string connectString = "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6379";
-            var options = ConfigurationOptions.Parse(connectString);
-            // options.AllowAdmin = true;
-            // options.ConfigCheckSeconds = 10;
-            // options.SyncTimeout = 1000;
-            //  options.Password = "password";
-            redisCluster = ConnectionMultiplexer.Connect(options);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
 
         IDatabase db = redisCluster.GetDatabase();
         db.StringSet("foo3", "bar3");
 
         Console.WriteLine(db.StringGet("foo3")); // prints bar3
-
+        redisCluster.Close();
 
         return Ok();
     }
