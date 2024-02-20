@@ -63,19 +63,44 @@ public class ValuesController : ControllerBase
 
         // ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379"); // single
         // ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379,localhost:6380,localhost:6381"); // main-secondary
-        ConnectionMultiplexer redis = ConnectionMultiplexer.SentinelConnect("localhost,serviceName=mymaster"); // sentinel
-        if (redis == null) return Ok();
-        if (!redis.IsConnected) return Ok();
+        // if (redis == null) return Ok();
+        // if (!redis.IsConnected) return Ok();
 
-        IDatabase db = redis.GetDatabase(); //database 0 을 사용한다.
-        // IDatabase db = redis.GetDatabase(1); //database 1 을 사용한다.
+        // IDatabase db = redis.GetDatabase(); //database 0 을 사용한다.
+        // // IDatabase db = redis.GetDatabase(1); //database 1 을 사용한다.
 
-        Console.WriteLine(db.Database.ToString());
+        // Console.WriteLine(db.Database.ToString());
+
+        // db.StringSet("foo2", "bar2");
+
+        // Console.WriteLine(db.StringGet("foo")); // prints bar
+
+        //sentinel
+        var sentinelConfig = new ConfigurationOptions
+        {
+            AllowAdmin = false,
+            AbortOnConnectFail = false,
+            CommandMap = CommandMap.Sentinel,
+            EndPoints =
+                {
+                    "localhost:26379",
+                },
+        };
+
+        var masterConfig = new ConfigurationOptions
+        {
+            CommandMap = CommandMap.Default,
+            ServiceName = "mymaster",
+        };
+
+        var redis = ConnectionMultiplexer.SentinelConnect(sentinelConfig, Console.Out);
+
+        var conn = redis.GetSentinelMasterConnection(masterConfig, Console.Out);
+        var db = conn.GetDatabase(0);
 
         db.StringSet("foo2", "bar2");
 
         Console.WriteLine(db.StringGet("foo")); // prints bar
-
 
 
         redis.Close();
