@@ -62,3 +62,15 @@ services:
       - REDIS_CLUSTER_CREATOR=yes
       - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
 
+  test:
+    image: test
+    container_name: test
+    depends_on:
+      - redis-node-0
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+    ports:
+      - 80:80
