@@ -83,7 +83,9 @@ public class ValuesController : ControllerBase
             CommandMap = CommandMap.Sentinel,
             EndPoints =
                 {
-                    "localhost:26379",
+                    "host.docker.internal:26379",
+                    "host.docker.internal:26380",
+                    "host.docker.internal:26381"
                 },
         };
 
@@ -94,14 +96,12 @@ public class ValuesController : ControllerBase
         };
 
         var redis = ConnectionMultiplexer.SentinelConnect(sentinelConfig, Console.Out);
-
         var conn = redis.GetSentinelMasterConnection(masterConfig, Console.Out);
         var db = conn.GetDatabase(0);
 
         db.StringSet("foo2", "bar2");
 
-        Console.WriteLine(db.StringGet("foo")); // prints bar
-
+        Console.WriteLine(db.StringGet("foo2")); // prints bar2
 
         redis.Close();
 
