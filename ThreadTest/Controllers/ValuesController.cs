@@ -76,34 +76,57 @@ public class ValuesController : ControllerBase
         // Console.WriteLine(db.StringGet("foo")); // prints bar
 
         //sentinel
-        var sentinelConfig = new ConfigurationOptions
+        // var sentinelConfig = new ConfigurationOptions
+        // {
+        //     AllowAdmin = false,
+        //     AbortOnConnectFail = false,
+        //     CommandMap = CommandMap.Sentinel,
+        //     EndPoints =
+        //         {
+        //             "host.docker.internal:26379",
+        //             "host.docker.internal:26380",
+        //             "host.docker.internal:26381"
+        //         },
+        // };
+
+        // var masterConfig = new ConfigurationOptions
+        // {
+        //     CommandMap = CommandMap.Default,
+        //     ServiceName = "mymaster",
+        // };
+
+        // var redis = ConnectionMultiplexer.SentinelConnect(sentinelConfig, Console.Out);
+        // var conn = redis.GetSentinelMasterConnection(masterConfig, Console.Out);
+        // var db = conn.GetDatabase(0);
+
+        // db.StringSet("foo2", "bar2");
+
+        // Console.WriteLine(db.StringGet("foo2")); // prints bar2
+
+        // redis.Close();
+
+        // cluster
+
+        ConnectionMultiplexer redisCluster = null;
+        try
         {
-            AllowAdmin = false,
-            AbortOnConnectFail = false,
-            CommandMap = CommandMap.Sentinel,
-            EndPoints =
-                {
-                    "host.docker.internal:26379",
-                    "host.docker.internal:26380",
-                    "host.docker.internal:26381"
-                },
-        };
-
-        var masterConfig = new ConfigurationOptions
+            string connectString = "127.0.0.1:7000,127.0.0.1:7001,127.0.0.1:7002";
+            var options = ConfigurationOptions.Parse(connectString);
+            options.AllowAdmin = true;
+            options.ConfigCheckSeconds = 10;
+            options.SyncTimeout = 1000;
+            //  options.Password = "password";
+            redisCluster = ConnectionMultiplexer.Connect(options);
+        }
+        catch (Exception e)
         {
-            CommandMap = CommandMap.Default,
-            ServiceName = "mymaster",
-        };
+            Console.WriteLine(e);
+        }
 
-        var redis = ConnectionMultiplexer.SentinelConnect(sentinelConfig, Console.Out);
-        var conn = redis.GetSentinelMasterConnection(masterConfig, Console.Out);
-        var db = conn.GetDatabase(0);
-
-        db.StringSet("foo2", "bar2");
-
-        Console.WriteLine(db.StringGet("foo2")); // prints bar2
-
-        redis.Close();
+        int loop = 100000;
+        IDatabase clusterDb = redisCluster.GetDatabase();
+        Console.WriteLine("SET Sync " + loop + " - Press any key to start");
+        Console.ReadKey();
 
         return Ok();
     }
