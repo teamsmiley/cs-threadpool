@@ -1,6 +1,10 @@
 using System.Diagnostics;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using NRedisStack;
+using NRedisStack.RedisStackCommands;
+using StackExchange.Redis;
 
 namespace ThreadTest.Controllers;
 
@@ -16,29 +20,29 @@ public class ValuesController : ControllerBase
     }
 
     [HttpGet]
-    public int Get()
+    public OkResult Get()
     {
-        Console.WriteLine($"The number of processors on this computer is {Environment.ProcessorCount}.");
+        // Console.WriteLine($"The number of processors on this computer is {Environment.ProcessorCount}.");
 
-        var maxWorkerThreads = 0;
-        var maxCompletionPortThreads = 0;
+        // var maxWorkerThreads = 0;
+        // var maxCompletionPortThreads = 0;
 
-        ThreadPool.GetMaxThreads(out maxWorkerThreads, out maxCompletionPortThreads);
-        Console.WriteLine("Maximum worker threads: {0}", maxWorkerThreads);
+        // ThreadPool.GetMaxThreads(out maxWorkerThreads, out maxCompletionPortThreads);
+        // Console.WriteLine("Maximum worker threads: {0}", maxWorkerThreads);
 
-        var availableWorkerThreads = 0;
-        var completionPortThreads = 0;
+        // var availableWorkerThreads = 0;
+        // var completionPortThreads = 0;
 
-        ThreadPool.GetAvailableThreads(out availableWorkerThreads, out completionPortThreads);
-        Console.WriteLine($"Available Worker threads: {availableWorkerThreads}", availableWorkerThreads);
+        // ThreadPool.GetAvailableThreads(out availableWorkerThreads, out completionPortThreads);
+        // Console.WriteLine($"Available Worker threads: {availableWorkerThreads}", availableWorkerThreads);
 
-        var usedWorkerThread = maxWorkerThreads - availableWorkerThreads;
-        Console.WriteLine($"Used worker threads: {usedWorkerThread}");
+        // var usedWorkerThread = maxWorkerThreads - availableWorkerThreads;
+        // Console.WriteLine($"Used worker threads: {usedWorkerThread}");
 
-        int minWorker, minIOC;
-        // Get the current settings.
-        ThreadPool.GetMinThreads(out minWorker, out minIOC);
-        Console.WriteLine("Minimum worker threads: {0}", minWorker);
+        // int minWorker, minIOC;
+        // // Get the current settings.
+        // ThreadPool.GetMinThreads(out minWorker, out minIOC);
+        // Console.WriteLine("Minimum worker threads: {0}", minWorker);
 
         // using var connection = new MySqlConnection("server=192.168.1.21;User ID=root;Password=root;database=test; ");
         // connection.Open();
@@ -54,8 +58,28 @@ public class ValuesController : ControllerBase
         //     System.Console.WriteLine($"blog url {url}");
         // }
 
-        Thread.Sleep(1000 * 10); // Sleep for 10 seconds
-        Console.WriteLine("Thread completed. go back to the pool.");
-        return usedWorkerThread;
+        // Thread.Sleep(1000 * 10); // Sleep for 10 seconds
+        // Console.WriteLine("Thread completed. go back to the pool.");
+
+        // ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379"); // single
+        // ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379,localhost:6380,localhost:6381"); // main-secondary
+        ConnectionMultiplexer redis = ConnectionMultiplexer.SentinelConnect("localhost,serviceName=mymaster"); // sentinel
+        if (redis == null) return Ok();
+        if (!redis.IsConnected) return Ok();
+
+        IDatabase db = redis.GetDatabase(); //database 0 을 사용한다.
+        // IDatabase db = redis.GetDatabase(1); //database 1 을 사용한다.
+
+        Console.WriteLine(db.Database.ToString());
+
+        db.StringSet("foo2", "bar2");
+
+        Console.WriteLine(db.StringGet("foo")); // prints bar
+
+
+
+        redis.Close();
+
+        return Ok();
     }
 }

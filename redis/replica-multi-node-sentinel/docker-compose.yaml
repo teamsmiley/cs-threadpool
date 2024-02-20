@@ -45,6 +45,18 @@ services:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis-main
       - ALLOW_EMPTY_PASSWORD=yes
+  
+  redis-secondary-4:
+    image: 'bitnami/redis:7.2'
+    container_name: redis-secondary-4
+    depends_on:
+      - redis-main
+    ports:
+      - 6383:6379
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-main
+      - ALLOW_EMPTY_PASSWORD=yes
 
   redis-sentinel-1:
     image: 'bitnami/redis-sentinel:7.2'
