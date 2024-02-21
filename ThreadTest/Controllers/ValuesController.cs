@@ -24,20 +24,20 @@ public class ValuesController : ControllerBase
     {
         // Console.WriteLine($"The number of processors on this computer is {Environment.ProcessorCount}.");
 
-        // var maxWorkerThreads = 0;
-        // var maxCompletionPortThreads = 0;
+        var maxWorkerThreads = 0;
+        var maxCompletionPortThreads = 0;
 
-        // ThreadPool.GetMaxThreads(out maxWorkerThreads, out maxCompletionPortThreads);
-        // Console.WriteLine("Maximum worker threads: {0}", maxWorkerThreads);
+        ThreadPool.GetMaxThreads(out maxWorkerThreads, out maxCompletionPortThreads);
+        Console.WriteLine("Maximum worker threads: {0}", maxWorkerThreads);
 
-        // var availableWorkerThreads = 0;
-        // var completionPortThreads = 0;
+        var availableWorkerThreads = 0;
+        var completionPortThreads = 0;
 
-        // ThreadPool.GetAvailableThreads(out availableWorkerThreads, out completionPortThreads);
-        // Console.WriteLine($"Available Worker threads: {availableWorkerThreads}", availableWorkerThreads);
+        ThreadPool.GetAvailableThreads(out availableWorkerThreads, out completionPortThreads);
+        Console.WriteLine($"Available Worker threads: {availableWorkerThreads}", availableWorkerThreads);
 
-        // var usedWorkerThread = maxWorkerThreads - availableWorkerThreads;
-        // Console.WriteLine($"Used worker threads: {usedWorkerThread}");
+        var usedWorkerThread = maxWorkerThreads - availableWorkerThreads;
+        Console.WriteLine($"Used worker threads: {usedWorkerThread}");
 
         // int minWorker, minIOC;
         // // Get the current settings.
@@ -58,22 +58,19 @@ public class ValuesController : ControllerBase
         //     System.Console.WriteLine($"blog url {url}");
         // }
 
-        // Thread.Sleep(1000 * 10); // Sleep for 10 seconds
-        // Console.WriteLine("Thread completed. go back to the pool.");
-
-        // ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379"); // single
+        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379"); // single
         // ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379,localhost:6380,localhost:6381"); // main-secondary
-        // if (redis == null) return Ok();
-        // if (!redis.IsConnected) return Ok();
+        if (redis == null) return Ok();
+        if (!redis.IsConnected) return Ok();
 
-        // IDatabase db = redis.GetDatabase(); //database 0 을 사용한다.
-        // // IDatabase db = redis.GetDatabase(1); //database 1 을 사용한다.
+        IDatabase db = redis.GetDatabase(); //database 0 을 사용한다.
+        // IDatabase db = redis.GetDatabase(1); //database 1 을 사용한다.
 
         // Console.WriteLine(db.Database.ToString());
 
-        // db.StringSet("foo2", "bar2");
+        db.StringSet("foo2", "bar2");
 
-        // Console.WriteLine(db.StringGet("foo")); // prints bar
+        Console.WriteLine(db.StringGet("foo2")); // prints bar
 
         //sentinel
         // var sentinelConfig = new ConfigurationOptions
@@ -106,15 +103,18 @@ public class ValuesController : ControllerBase
         // redis.Close();
 
         // cluster
-        string connectString = "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6379";
-        var options = ConfigurationOptions.Parse(connectString);
-        var redisCluster = ConnectionMultiplexer.Connect(options);
+        // string connectString = "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6379";
+        // var options = ConfigurationOptions.Parse(connectString);
+        // var redisCluster = ConnectionMultiplexer.Connect(options);
 
-        IDatabase db = redisCluster.GetDatabase();
-        db.StringSet("foo3", "bar3");
+        // IDatabase db = redisCluster.GetDatabase();
+        // db.StringSet("foo3", "bar3");
 
-        Console.WriteLine(db.StringGet("foo3")); // prints bar3
-        redisCluster.Close();
+        // Console.WriteLine(db.StringGet("foo3")); // prints bar3
+        // redisCluster.Close();
+
+        Thread.Sleep(1000 * 10); // Sleep for 10 seconds
+        Console.WriteLine("Thread completed. go back to the pool.");
 
         return Ok();
     }
