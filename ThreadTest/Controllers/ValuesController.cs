@@ -110,7 +110,6 @@ public class ValuesController : ControllerBase
         var options = ConfigurationOptions.Parse(connectString);
         var redisCluster = ConnectionMultiplexer.Connect(options);
 
-
         IDatabase db = redisCluster.GetDatabase();
         db.StringSet("foo3", "bar3");
 

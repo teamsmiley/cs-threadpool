@@ -22,7 +22,7 @@ redis:
       enabled: true
 
   replica:
-    replicaCount: 3
+    replicaCount: 2
     resources:
       limits: {}
       #   cpu: 250m
@@ -39,7 +39,7 @@ redis:
       registry: docker.io
       repository: bitnami/redis-sentinel
       tag: 7.2
-    quorum: 3
+    quorum: 2
 
   metrics:
     enabled: true
