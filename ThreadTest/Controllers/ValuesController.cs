@@ -39,10 +39,10 @@ public class ValuesController : ControllerBase
         var usedWorkerThread = maxWorkerThreads - availableWorkerThreads;
         Console.WriteLine($"Used worker threads: {usedWorkerThread}");
 
-        // int minWorker, minIOC;
-        // // Get the current settings.
-        // ThreadPool.GetMinThreads(out minWorker, out minIOC);
-        // Console.WriteLine("Minimum worker threads: {0}", minWorker);
+        int minWorker, minIOC;
+        // Get the current settings.
+        ThreadPool.GetMinThreads(out minWorker, out minIOC);
+        Console.WriteLine("Minimum worker threads: {0}", minWorker);
 
         // using var connection = new MySqlConnection("server=192.168.1.21;User ID=root;Password=root;database=test; ");
         // connection.Open();
