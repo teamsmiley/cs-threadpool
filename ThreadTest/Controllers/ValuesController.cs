@@ -12,10 +12,12 @@ namespace ThreadTest.Controllers;
 [Route("values")]
 public class ValuesController : ControllerBase
 {
+    private readonly IDatabase db;
     private readonly ILogger<ValuesController> _logger;
 
-    public ValuesController(ILogger<ValuesController> logger)
+    public ValuesController(IDatabase _db, ILogger<ValuesController> logger)
     {
+        db = _db;
         _logger = logger;
     }
 
@@ -58,12 +60,10 @@ public class ValuesController : ControllerBase
         //     System.Console.WriteLine($"blog url {url}");
         // }
 
-        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379"); // single
+        // ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379"); // single
         // ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379,localhost:6380,localhost:6381"); // main-secondary
-        if (redis == null) return Ok();
-        if (!redis.IsConnected) return Ok();
 
-        IDatabase db = redis.GetDatabase(); //database 0 을 사용한다.
+        // IDatabase db = redis.GetDatabase(); //database 0 을 사용한다.
         // IDatabase db = redis.GetDatabase(1); //database 1 을 사용한다.
 
         // Console.WriteLine(db.Database.ToString());
@@ -113,7 +113,7 @@ public class ValuesController : ControllerBase
         // Console.WriteLine(db.StringGet("foo3")); // prints bar3
         // redisCluster.Close();
 
-        Thread.Sleep(1000 * 10); // Sleep for 10 seconds
+        // Thread.Sleep(1000 * 10); // Sleep for 10 seconds
         Console.WriteLine("Thread completed. go back to the pool.");
 
         return Ok();
