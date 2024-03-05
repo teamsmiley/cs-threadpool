@@ -1,36 +1,40 @@
 version: '3'
 services:
-  redis-main:
+  redis-master:
     image: 'bitnami/redis:7.2'
-    container_name: redis-main
-    ports:
-      - 6379:6379
+    container_name: redis-master
     environment:
       - REDIS_REPLICATION_MODE=master
       - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - redis
 
-  redis-secondary-1:
-    image: 'bitnami/redis:7.2'
-    container_name: redis-secondary-1
-    ports:
-      - 6380:6379
-    depends_on:
-      - redis-main
-    environment:
-      - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis-main
-      - ALLOW_EMPTY_PASSWORD=yes
+  # redis-slave-1:
+  #   image: 'bitnami/redis:7.2'
+  #   container_name: redis-slave-1
+  #   network_mode: host
+  #   depends_on:
+  #     - redis-master
+  #   environment:
+  #     - REDIS_REPLICATION_MODE=slave
+  #     - REDIS_MASTER_HOST=localhost
+  #     # - REDIS_MASTER_PORT_NUMBER=6379
+  #     - REDIS_DEFAULT_PORT_NUMBER=6380
+  #     - ALLOW_EMPTY_PASSWORD=yes
   
-  redis-secondary-2:
-    image: 'bitnami/redis:7.2'
-    container_name: redis-secondary-2
-    ports:
-      - 6381:6379
-    depends_on:
-      - redis-main
-    environment:
-      - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis-main
-      - ALLOW_EMPTY_PASSWORD=yes
+  # redis-slave-2:
+  #   image: 'bitnami/redis:7.2'
+  #   container_name: redis-slave-2
+  #   network_mode: host
+  #   depends_on:
+  #     - redis-master
+  #   environment:
+  #     - REDIS_REPLICATION_MODE=slave
+  #     - REDIS_MASTER_HOST=localhost
+  #     # - REDIS_MASTER_PORT_NUMBER=6379
+  #     - REDIS_DEFAULT_PORT_NUMBER=6381
+  #     - ALLOW_EMPTY_PASSWORD=yes
   
-  
+networks:
+  redis:
+    driver: host

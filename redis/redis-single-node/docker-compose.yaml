@@ -3,7 +3,8 @@ services:
   redis:
     image: 'bitnami/redis:7.2'
     container_name: redis
-    ports:
-      - 6379:6379
+    network_mode: "host"
+    # ports:
+    #   - 6379:6379
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
